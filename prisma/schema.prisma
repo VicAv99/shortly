@@ -3,14 +3,19 @@
 
 generator client {
     provider = "prisma-client-js"
+    previewFeatures = ["referentialIntegrity"]
 }
 
 datasource db {
-    provider = "sqlite"
-    url      = "file:./db.sqlite"
-    // url      = env("DATABASE_URL")
+    provider = "mysql"
+    url      = env("DATABASE_URL")
+    referentialIntegrity = "prisma"
 }
 
-model Example {
+model ShortLink {
     id String @id @default(cuid())
+    createdAt DateTime @default(now())
+    url String @db.VarChar(2000)
+    slug String @unique
+    @@index(slug)
 }
