@@ -12,12 +12,12 @@ interface UrlProps {
 
 export const ShortlyUrl = ({ shortLink }: UrlProps) => {
   const { copy, copied } = useClipboard({ timeout: 500 });
-  const copyUrl = () => copy(shortLink?.slug);
   const Tool = copied ? Tooltip : 'div';
 
   if (!shortLink?.id) return null;
 
   const shortUrl = `${window.location.origin}/${shortLink?.slug}`;
+  const copyUrl = () => copy(shortUrl);
 
   return (
     <div className='flex text-center items-center justify-center'>
