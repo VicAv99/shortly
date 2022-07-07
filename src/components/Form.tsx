@@ -31,6 +31,9 @@ export const ShortlyForm = () => {
     { slug: debounced },
   ]);
 
+  console.log('data', isLoading || !data?.isAvailable || !formState.isValid);
+  console.log('dataff', isLoading, !data?.isAvailable, !formState.isValid);
+
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className='w-5/12'>
       <Input
