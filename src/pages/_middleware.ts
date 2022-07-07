@@ -7,7 +7,7 @@ export async function middleware(req: NextRequest, ev: NextFetchEvent) {
   if (pathname.startsWith('/api/get-url/')) return;
 
   const slug = pathname.split('/').pop();
-  const url = `${origin}/api/get-url/${slug}`;
+  const url = `${req.nextUrl.origin}/api/get-url/${slug}`;
   const data = await (await fetch(url)).json();
 
   if (data.url) {
