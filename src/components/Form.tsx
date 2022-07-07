@@ -1,4 +1,4 @@
-import { Button, Input, Tooltip } from '@mantine/core';
+import { Anchor, Button, Input, Tooltip } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import React from 'react';
 import { useForm } from 'react-hook-form';
@@ -19,9 +19,15 @@ const formOpts = {
 };
 
 export const ShortlyForm = () => {
-  const onSubmit = (data: FormData) => console.log(data);
-  const { register, handleSubmit, watch } = useForm<FormData>(formOpts);
-  const slugValue = watch('slug');
+  const {
+    mutate,
+    data: shortLink,
+    isLoading: submitLoading,
+  } = trpc.useMutation(['shortly.create-short-link']);
+  const onSubmit = (data: FormData) =>
+    mutate({ url: data.url, slug: data.slug });
+  const { formState, ...form } = useForm<FormData>(formOpts);
+  const slugValue = form.watch('slug');
   const [debounced] = useDebouncedValue(slugValue, 400);
   const { data, isFetching, isLoading } = trpc.useQuery([
     'shortly.slug-available',
@@ -40,36 +46,54 @@ export const ShortlyForm = () => {
       position='top'
       placement='end'
     >
-      <InputIcon size={16} className='block opacity-50' />
+      {formState.dirtyFields.slug && (
+        <InputIcon size={16} className='block opacity-50' />
+      )}
     </Tooltip>
   );
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className='w-5/12'>
+    <form onSubmit={form.handleSubmit(onSubmit)} className='w-5/12'>
       <Input
-        {...register('slug')}
+        {...form.register('slug', { required: true })}
         placeholder='Choose an awesome slug!'
         rightSection={rightSection}
         mb={25}
         size='lg'
       />
       <Input
-        {...register('url')}
+        {...form.register('url', { required: true })}
         placeholder='Enter your long url!'
         size='lg'
         mb={25}
       />
       <Button
-        disabled={!data?.isAvailable || isFetching}
+        disabled={!formState.isValid && !data?.isAvailable}
         type='submit'
         variant='subtle'
         fullWidth
-        mb={300}
+        mb={shortLink?.id ? 25 : 300}
         radius='md'
         size='md'
+        loading={submitLoading}
       >
         Generate Short Link
       </Button>
+      {shortLink?.id && (
+        <div className='text-center'>
+          <Anchor
+            mb={300}
+            variant='link'
+            align='center'
+            underline
+            className='cursor-pointer text-center'
+            target='_blank'
+            href={`${window.location.origin}/${shortLink.slug}`}
+          >
+            {`${window.location.origin}/${shortLink.slug}`}
+          </Anchor>
+        </div>
+      )}
     </form>
   );
 };
