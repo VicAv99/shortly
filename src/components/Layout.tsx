@@ -1,10 +1,4 @@
-import {
-  AppShell,
-  Center,
-  ColorScheme,
-  ColorSchemeProvider,
-  MantineProvider,
-} from '@mantine/core';
+import { AppShell, Center, ColorScheme, ColorSchemeProvider, MantineProvider, MantineTheme } from '@mantine/core';
 import React, { PropsWithChildren, useState } from 'react';
 
 import { ShortlyHeader } from './Header';
@@ -15,6 +9,15 @@ export const ShortlyLayout = (props: PropsWithChildren<LayoutProps>) => {
   const [colorScheme, setColorScheme] = useState<ColorScheme>('light');
   const toggleColorScheme = (value?: ColorScheme) =>
     setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'));
+  const shellBg = (theme: MantineTheme) => ({
+    main: {
+      backgroundColor:
+        theme.colorScheme === 'dark'
+          ? theme.colors.dark[8]
+          : theme.colors.gray[0],
+    },
+  });
+
   return (
     <ColorSchemeProvider
       colorScheme={colorScheme}
@@ -28,7 +31,12 @@ export const ShortlyLayout = (props: PropsWithChildren<LayoutProps>) => {
           colorScheme,
         }}
       >
-        <AppShell fixed padding='md' header={<ShortlyHeader />}>
+        <AppShell
+          fixed
+          padding='md'
+          header={<ShortlyHeader />}
+          styles={shellBg}
+        >
           <Center className='h-full'>{props.children}</Center>
         </AppShell>
       </MantineProvider>
