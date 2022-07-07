@@ -1,0 +1,8 @@
+# Ignore artifacts:
+.env
+.next
+.swc
+build
+coverage
+node_modules
+prisma

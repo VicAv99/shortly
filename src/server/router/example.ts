@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 import { createRouter } from './context';
 
-export const exampleRouter = createRouter().query("hello", {
+export const exampleRouter = createRouter().query('hello', {
   input: z
     .object({
       text: z.string().nullish(),
@@ -10,7 +10,7 @@ export const exampleRouter = createRouter().query("hello", {
     .nullish(),
   resolve({ input }) {
     return {
-      greeting: `Hello ${input?.text ?? "world"}`,
+      greeting: `Hello ${input?.text ?? 'world'}`,
     };
   },
 });

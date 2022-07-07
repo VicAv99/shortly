@@ -1,11 +1,11 @@
 import { prisma } from '../../../server/db/client';
 
-import type { NextApiRequest, NextApiResponse } from "next";
+import type { NextApiRequest, NextApiResponse } from 'next';
 const slug = async (req: NextApiRequest, res: NextApiResponse) => {
   const { slug } = req.query;
 
-  if (!slug || typeof slug !== "string") {
-    res.status(404).json({ message: "Please use with a slug" });
+  if (!slug || typeof slug !== 'string') {
+    res.status(404).json({ message: 'Please use with a slug' });
     return;
   }
 
@@ -14,10 +14,10 @@ const slug = async (req: NextApiRequest, res: NextApiResponse) => {
   });
 
   if (!data) {
-    res.setHeader("Content-Type", "application/json");
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Cache-Control", "s-maxage=10000, max-age=0");
-    res.status(404).json({ message: "Slug not found" });
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Cache-Control', 's-maxage=10000, max-age=0');
+    res.status(404).json({ message: 'Slug not found' });
     return;
   }
 
