@@ -1,7 +1,7 @@
-// src/pages/api/examples.ts
-import type { NextApiRequest, NextApiResponse } from "next";
+import { prisma } from '../../../server/db/client';
 
-const examples = async (req: NextApiRequest, res: NextApiResponse) => {
+import type { NextApiRequest, NextApiResponse } from "next";
+const slug = async (req: NextApiRequest, res: NextApiResponse) => {
   const { slug } = req.query;
 
   if (!slug || typeof slug !== "string") {
@@ -18,7 +18,7 @@ const examples = async (req: NextApiRequest, res: NextApiResponse) => {
     return;
   }
 
-  return res.redirect(data.url);
+  return res.json(data);
 };
 
-export default examples;
+export default slug;
