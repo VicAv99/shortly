@@ -1,8 +1,8 @@
-import { Anchor, Button, Input, Tooltip } from '@mantine/core';
-import { useDebouncedValue } from '@mantine/hooks';
+import { ActionIcon, Anchor, Button, Input, Tooltip } from '@mantine/core';
+import { useClipboard, useDebouncedValue } from '@mantine/hooks';
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { FiCheck, FiLoader, FiX } from 'react-icons/fi';
+import { FiCheck, FiCopy, FiLoader, FiX } from 'react-icons/fi';
 
 import { trpc } from '../utils/trpc';
 
@@ -19,6 +19,7 @@ const formOpts = {
 };
 
 export const ShortlyForm = () => {
+  const { copy, copied } = useClipboard({ timeout: 500 });
   const {
     mutate,
     data: shortLink,
@@ -33,6 +34,7 @@ export const ShortlyForm = () => {
     'shortly.slug-available',
     { slug: debounced },
   ]);
+  const Tool = copied ? Tooltip : 'div';
 
   const InputIcon = isLoading
     ? FiLoader
@@ -68,11 +70,13 @@ export const ShortlyForm = () => {
         mb={25}
       />
       <Button
-        disabled={!formState.isValid && !data?.isAvailable}
+        disabled={
+          !formState.isValid || !formState.isDirty || !data?.isAvailable
+        }
         type='submit'
         variant='subtle'
         fullWidth
-        mb={shortLink?.id ? 25 : 300}
+        mb={shortLink?.id ? 290 : 300}
         radius='md'
         size='md'
         loading={submitLoading}
@@ -80,9 +84,9 @@ export const ShortlyForm = () => {
         Generate Short Link
       </Button>
       {shortLink?.id && (
-        <div className='text-center'>
+        <div className='flex text-center items-center justify-center'>
           <Anchor
-            mb={300}
+            mr={10}
             variant='link'
             align='center'
             underline
@@ -92,6 +96,17 @@ export const ShortlyForm = () => {
           >
             {`${window.location.origin}/${shortLink.slug}`}
           </Anchor>
+          <Tool label={copied && 'Copied'} position='top' placement='end'>
+            <ActionIcon
+              onClick={() =>
+                copy(`${window.location.origin}/${shortLink.slug}`)
+              }
+              ml={10}
+              variant='outline'
+            >
+              <FiCopy size={16} />
+            </ActionIcon>
+          </Tool>
         </div>
       )}
     </form>
