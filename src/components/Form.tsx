@@ -1,9 +1,10 @@
-import { Button, Input } from '@mantine/core';
+import { Button } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import React from 'react';
-import { useForm } from 'react-hook-form';
+import { Control, useForm, ValidationMode } from 'react-hook-form';
 
 import { trpc } from '../utils/trpc';
+import { ShortlyField } from './Field';
 import { ShortlySlugFieldIcon } from './SlugFieldIcon';
 import { ShortlyUrl } from './Url';
 
@@ -13,6 +14,7 @@ interface FormData {
 }
 
 const formOpts = {
+  mode: 'onChange' as keyof ValidationMode,
   defaultValues: {
     slug: '',
     url: '',
@@ -31,29 +33,30 @@ export const ShortlyForm = () => {
     { slug: debounced },
   ]);
 
-  console.log('data', isLoading || !data?.isAvailable || !formState.isValid);
-  console.log('dataff', isLoading, !data?.isAvailable, !formState.isValid);
-
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className='w-5/12'>
-      <Input
-        {...form.register('slug', { required: true })}
-        placeholder='Choose an awesome slug!'
-        rightSection={
-          <ShortlySlugFieldIcon
-            control={form.control}
-            fetchLoading={isLoading}
-            isAvailable={data?.isAvailable}
-          />
-        }
-        mb={25}
-        size='lg'
+      <ShortlyField
+        name='slug'
+        control={form.control as Control<any, any>}
+        inputProps={{
+          placeholder: 'Choose an awesome slug!',
+          rightSection: (
+            <ShortlySlugFieldIcon
+              control={form.control}
+              fetchLoading={isLoading}
+              isAvailable={data?.isAvailable}
+            />
+          ),
+          size: 'lg',
+        }}
       />
-      <Input
-        {...form.register('url', { required: true })}
-        placeholder='Enter your long url!'
-        size='lg'
-        mb={25}
+      <ShortlyField
+        name='url'
+        control={form.control as Control<any, any>}
+        inputProps={{
+          placeholder: 'Enter your long url!',
+          size: 'lg',
+        }}
       />
       <Button
         disabled={isLoading || !data?.isAvailable || !formState.isValid}
