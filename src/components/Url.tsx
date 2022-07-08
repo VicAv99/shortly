@@ -14,7 +14,7 @@ export const ShortlyUrl = ({ shortLink }: UrlProps) => {
   const { copy, copied } = useClipboard({ timeout: 500 });
   const Tool = copied ? Tooltip : 'div';
 
-  if (!shortLink?.id) return null;
+  if (!shortLink?.id) return <></>;
 
   const shortUrl = `${window.location.origin}/${shortLink?.slug}`;
   const copyUrl = () => copy(shortUrl);

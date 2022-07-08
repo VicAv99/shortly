@@ -1,4 +1,5 @@
 import { AppShell, Center, ColorScheme, ColorSchemeProvider, MantineProvider, MantineTheme } from '@mantine/core';
+import { NotificationsProvider } from '@mantine/notifications';
 import React, { PropsWithChildren, useState } from 'react';
 
 import { ShortlyHeader } from './Header';
@@ -31,14 +32,16 @@ export const ShortlyLayout = (props: PropsWithChildren<LayoutProps>) => {
           colorScheme,
         }}
       >
-        <AppShell
-          fixed
-          padding='md'
-          header={<ShortlyHeader />}
-          styles={shellBg}
-        >
-          <Center className='h-full'>{props.children}</Center>
-        </AppShell>
+        <NotificationsProvider>
+          <AppShell
+            fixed
+            padding='md'
+            header={<ShortlyHeader />}
+            styles={shellBg}
+          >
+            <Center className='h-full'>{props.children}</Center>
+          </AppShell>
+        </NotificationsProvider>
       </MantineProvider>
     </ColorSchemeProvider>
   );

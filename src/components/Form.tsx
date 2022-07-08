@@ -1,6 +1,7 @@
-import { Button, Notification } from '@mantine/core';
+import { Button } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
-import React from 'react';
+import { useNotifications } from '@mantine/notifications';
+import React, { useEffect } from 'react';
 import { Control, useForm, ValidationMode } from 'react-hook-form';
 
 import { trpc } from '../utils/trpc';
@@ -22,14 +23,10 @@ const formOpts = {
 };
 
 export const ShortlyForm = () => {
+  const notify = useNotifications();
   const { formState, ...form } = useForm<FormData>(formOpts);
   const { mutate, ...short } = trpc.useMutation(['shortly.create-short-link']);
   const onSubmit = (data: FormData) => mutate(data);
-  const [notification, setNotification] = React.useState(short.isError);
-  const clearError = () => {
-    short.reset();
-    setNotification(false);
-  };
 
   const slugValue = form.watch('slug');
   const [debounced] = useDebouncedValue(slugValue, 400);
@@ -37,6 +34,18 @@ export const ShortlyForm = () => {
     'shortly.slug-available',
     { slug: debounced },
   ]);
+
+  useEffect(() => {
+    if (short.isError) {
+      notify.showNotification({
+        color: 'red',
+        message: (
+          <>Please make sure you find a unique slug and entered a proper url.</>
+        ),
+        title: 'Something Went Wrong!',
+      });
+    }
+  }, [short.isError]);
 
   return (
     <>
@@ -69,7 +78,7 @@ export const ShortlyForm = () => {
           type='submit'
           variant='subtle'
           fullWidth
-          mb={short.data?.id ? 250 : 300}
+          mb={short.data?.id ? 72 : 100}
           radius='md'
           size='md'
           loading={short.isLoading}
@@ -77,17 +86,6 @@ export const ShortlyForm = () => {
           Generate Short Link
         </Button>
         <ShortlyUrl shortLink={short.data} />
-        {(notification || short.isError) && (
-          <Notification
-            onClose={clearError}
-            color='red'
-            radius='md'
-            title='Something Went Wrong'
-            className='-mt-20'
-          >
-            {short.error?.message}
-          </Notification>
-        )}
       </form>
     </>
   );

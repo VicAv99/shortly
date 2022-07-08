@@ -19,6 +19,11 @@ export const ShortlySlugFieldIcon = ({
   ...props
 }: SlugFieldIconProps) => {
   const { dirtyFields } = useFormState({ control });
+  const color = props.fetchLoading
+    ? 'blue'
+    : !props.fetchLoading && props.isAvailable
+    ? 'green'
+    : 'red';
   const InputIcon = props.fetchLoading
     ? FiLoader
     : !props.fetchLoading && props.isAvailable
@@ -31,7 +36,9 @@ export const ShortlySlugFieldIcon = ({
       position='top'
       placement='end'
     >
-      {dirtyFields.slug && <InputIcon size={16} className='block opacity-50' />}
+      {dirtyFields.slug && (
+        <InputIcon color={color} size={16} className='block opacity-50' />
+      )}
     </Tooltip>
   );
 };
